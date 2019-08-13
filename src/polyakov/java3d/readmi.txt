@@ -1,0 +1,61 @@
+рендеринг расщитать для сцены текущий кадр полодение всех точек, запустить прорисовку для полученое сцены
+
+по setKadr устанавливается текущее положение которое запоминается в обекте Scrin
+
+координаты точек задаются относительно центра тела(при отображении расположение в сцене расчитывается)
+нужна возможность изменять положение только сентра обекта при этом координаты всех точек пересчитываются так что глобалоно они остались темеже
+
+
+// получить положение точек относительно мировой СК
+	public Point3D[] getTochka(boolean vtochek, boolean vtext)
+	{
+		if (mp != null)
+		{
+			Point3D[] mT = new Point3D[mp.length];
+			double tx, ty, tz;
+			double x2, y2;
+			double cosX = Math.cos(rx / GRADUSOVvRADIANE);
+			double sinX = Math.sin(rx / GRADUSOVvRADIANE);
+			double cosY = Math.cos(ry / GRADUSOVvRADIANE);
+			double sinY = Math.sin(ry / GRADUSOVvRADIANE);
+			double cosZ = Math.cos(rz / GRADUSOVvRADIANE);
+			double sinZ = Math.sin(rz / GRADUSOVvRADIANE);
+			int i;
+			for (i = 0; i < mT.length; i++)
+			{
+				tx = mp[i].x;
+				ty = mp[i].y;
+				tz = mp[i].z;
+				// поворот
+				// поворот вокруг оси X
+				y2 = ty * cosX + tz * sinX;
+				tz = tz * cosX - ty * sinX;
+				ty = y2;
+				// поворот вокруг оси Y
+				x2 = tx * cosY + tz * sinY;
+				tz = tz * cosY - tx * sinY;
+				tx = x2;
+				// поворот вокруг оси Z
+				x2 = tx * cosZ + ty * sinZ;
+				ty = ty * cosZ - tx * sinZ;
+				tx = x2;
+				// перенос
+				tx += x;
+				ty += y;
+				tz += z;
+				mT[i] = new Point3D(tx, ty, tz);
+				if (vtochek)
+				{ // переписать точку
+					mT[i].color = mp[i].color;
+					mT[i].d = mp[i].d;
+				}
+				if (vtext)
+				{ // переписать надписи к точкам
+					mT[i].text = mp[i].text;
+					mT[i].colorText = mp[i].colorText;
+				}
+			}
+			return mT;
+		} else
+			return null;
+	}
