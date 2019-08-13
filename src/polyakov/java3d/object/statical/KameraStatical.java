@@ -4,6 +4,7 @@ import polyakov.java3d.object.dynamical.Gran;
 import polyakov.java3d.object.dynamical.*;
 import polyakov.java3d.object.dynamical.Rebro;
 import polyakov.java3d.object.scen.telo.SortGran;
+import polyakov.java3d.Const;
 
 import java.awt.*;
 import java.awt.image.MemoryImageSource;
@@ -19,13 +20,12 @@ public abstract class KameraStatical extends ObjectStatical
 {
 	public static Toolkit tool = Toolkit.getDefaultToolkit();
 	private static int BGCOLOR = 0xffeeeeee;
-	public static double GRADUSOVvRADIANE = 180 / Math.PI;	// градусов в одном радиане
 	public static Font textFont = new Font(Font.MONOSPACED, Font.BOLD, 20);
 
 	public ScenStatical scen;
 	public double x, y, z;		// положение камеры
-	public double nx, ny, nz;		// положение мишени
-	public double a;			// поворот камеры вокруг оси
+	public double nx, ny, nz;	// положение мишени
+	public double angle;		// поворот камеры вокруг оси
 	public double d, me;		// минимльное растояние до экрана, масштаб экрана
 
 	public boolean perspektiva;	// перспективное проецирование
@@ -58,7 +58,7 @@ public abstract class KameraStatical extends ObjectStatical
 		nx = 0;
 		ny = 0;
 		nz = 0;
-		a = 144;
+		angle = 144;
 		d = 2;
 		me = 1;
 		perspektiva = false;
@@ -101,15 +101,14 @@ public abstract class KameraStatical extends ObjectStatical
 	}
 
 	// найти углы камеры
-	private void setUgol()
+	protected void setUgol()
 	{
 		double gip;
-		// !!!x<->nx
-		double tx = x - nx;
-		double ty = y - ny;
-		double tz = z - nz;
-		cosZ = Math.cos(a / GRADUSOVvRADIANE);
-		sinZ = Math.sin(a / GRADUSOVvRADIANE);
+		double tx = nx - x;
+		double ty = ny - y;
+		double tz = nz - z;
+		cosZ = Math.cos(angle * Const.RADIAN_V_GRADUSE);
+		sinZ = Math.sin(angle * Const.RADIAN_V_GRADUSE);
 		if (tx != 0 || ty != 0)
 		{
 			gip = Math.sqrt(tx * tx + tz * tz);	// гипотенуза
@@ -161,16 +160,15 @@ public abstract class KameraStatical extends ObjectStatical
 	// перспектва ск -сетка -надписи -точки -грани -освещение
 	public synchronized void render(Graphics g)
 	{
-		int s = 0;
 		int xaInt, yaInt,
-				xbInt, ybInt,
-				xcInt, ycInt;	// координаты на экране
+				xbInt, ybInt;	// координаты на экране
 		double tx = nx - x;
 		double ty = ny - y;
 		double tz = nz - z;
 		double x2, y2, z2;
-		double zEkr = Math.sqrt(tx * tx + ty * ty + tz * tz);	// растояние до экрана
-		setUgol();
+		double zEkr = tz;
+		if (perspektiva)
+			zEkr = Math.sqrt(tx * tx + ty * ty + tz * tz);	// растояние до экрана
 
 		// переcчитать положение точки для каметы
 		for (int i = 0; i < scen.mTelLen; i++)
@@ -194,20 +192,23 @@ public abstract class KameraStatical extends ObjectStatical
 					x2 = tx * cosZ + ty * sinZ;
 					ty = ty * cosZ - tx * sinZ;
 					tx = x2;
+					// удоленость точки от камеры
+					tz += zEkr;
 					if (perspektiva)
 					{	// перспективное проецирование
-						if (tz != zEkr)
+						if (tz > d)
+						{						if (tz != zEkr)
 						{
-							if (tz > zEkr - d)
-								tz = zEkr - d;
 							tx = tx * zEkr / (zEkr - tz);
 							ty = ty * zEkr / (zEkr - tz);
 						}
-					}	// паралельное проецирование x,y не изменяются
+						tz = Math.sqrt(tx * tx + ty * ty + tz * tz);
+						}
+					}//else	{	// паралельное проецирование x,y не изменяются	}
 					// экранные координаты
-					scen.mTel[i].mp[j].kx = tx * me + width / 2;
-					scen.mTel[i].mp[j].ky = -ty * me + height / 2;
-					scen.mTel[i].mp[j].kz = tz;
+					scen.mTel[i].mp[j].kx = (int) (tx * me + width / 2);
+					scen.mTel[i].mp[j].ky = (int) (-ty * me + height / 2);
+					scen.mTel[i].mp[j].kz = (float) tz;
 					// !!! не учитывается положение точки по z
 					scen.mTel[i].mp[j].kVis = scen.mTel[i].mp[j].kx >= 0 &&
 							scen.mTel[i].mp[j].kx < width &&
@@ -274,15 +275,15 @@ public abstract class KameraStatical extends ObjectStatical
 				{
 					if (mg.gran.material != null)
 					{   // грань с материалом
-						drawGranZ((int) mg.gran.a.kx, (int) mg.gran.a.ky, (float) mg.gran.a.kz,
-								(int) mg.gran.b.kx, (int) mg.gran.b.ky, (float) mg.gran.b.kz,
-								(int) mg.gran.c.kx, (int) mg.gran.c.ky, (float) mg.gran.c.kz, mg.gran.material.color);
+						drawGranZ(mg.gran.a.kx, mg.gran.a.ky, (float) mg.gran.a.kz,
+								mg.gran.b.kx, mg.gran.b.ky, (float) mg.gran.b.kz,
+								mg.gran.c.kx, mg.gran.c.ky, (float) mg.gran.c.kz, mg.gran.material.color);
 						// !!! прорисовка текстуры
 					} else
 					{
-						drawGranZ((int) mg.gran.a.kx, (int) mg.gran.a.ky, (float) mg.gran.a.kz,
-								(int) mg.gran.b.kx, (int) mg.gran.b.ky, (float) mg.gran.b.kz,
-								(int) mg.gran.c.kx, (int) mg.gran.c.ky, (float) mg.gran.c.kz, 0xfffefefe);
+						drawGranZ(mg.gran.a.kx, mg.gran.a.ky, (float) mg.gran.a.kz,
+								mg.gran.b.kx, mg.gran.b.ky, (float) mg.gran.b.kz,
+								mg.gran.c.kx, mg.gran.c.ky, (float) mg.gran.c.kz, 0xfffefefe);
 					}
 				}
 				mg = mg.next;
@@ -343,7 +344,7 @@ public abstract class KameraStatical extends ObjectStatical
 			xbInt = (int) (tx + xaInt);
 			ybInt = (int) (-ty + yaInt);
 			drawLine(xaInt, yaInt, xbInt, ybInt, 0xffff0000);
-			tx = 0;
+
 			ty = 20;
 			// поворот
 			// поворот вокруг оси X
@@ -374,6 +375,7 @@ public abstract class KameraStatical extends ObjectStatical
 			ybInt = (int) (-ty + yaInt);
 			drawLine(xaInt, yaInt, xbInt, ybInt, 0xff0000ff);
 		}
+		// !!!for test
 		drawZbufer();
 		pic = tool.createImage(new MemoryImageSource(width, height, image, 0, width));
 		// ждем пока изображение сгенерируется
@@ -392,7 +394,7 @@ public abstract class KameraStatical extends ObjectStatical
 						{
 							g.setColor(new Color(scen.mTel[i].mp[j].colorText));
 							g.setFont(textFont);
-							g.drawString(scen.mTel[i].mp[j].text, (int) scen.mTel[i].mp[j].kx, (int) scen.mTel[i].mp[j].ky);
+							g.drawString(scen.mTel[i].mp[j].text, scen.mTel[i].mp[j].kx, scen.mTel[i].mp[j].ky);
 						}
 					}
 				}
@@ -412,6 +414,9 @@ public abstract class KameraStatical extends ObjectStatical
 			if (imageZ[i] > -1000000 && imageZ[i] < min)
 				min = imageZ[i];
 		}
+		float del = (max - min) / 5;
+		max += del;
+		min -= del;
 		for (i = 0; i < imageZ.length; i++)
 		{
 			if (imageZ[i] < min)
@@ -426,11 +431,9 @@ public abstract class KameraStatical extends ObjectStatical
 
 	private void drawTochka(Tochka tochka)
 	{
-		int xaInt = (int) tochka.kx;
-		int yaInt = (int) tochka.ky;
 		// внутри окна
-		if (xaInt >= 0 && xaInt < width && yaInt >= 0 && yaInt < height)
-			drawPointZ(xaInt, yaInt, (float) tochka.kz, tochka.d, tochka.color);
+		if (tochka.kVis)
+			drawPointZ(tochka.kx, tochka.ky, (float) tochka.kz, tochka.d, tochka.color);
 	}
 
 	// Точка с учетом z буфера
@@ -491,16 +494,9 @@ public abstract class KameraStatical extends ObjectStatical
 
 	private void drawRebro(Rebro rebro)
 	{
-		int axInt = (int) rebro.a.kx;
-		int ayInt = (int) rebro.a.ky;
-		int bxInt = (int) rebro.b.kx;
-		int byInt = (int) rebro.b.ky;
 		// внутри окна
-		if (!(axInt < 0 && bxInt < 0 ||
-				axInt > width && bxInt > width ||
-				ayInt < 0 && byInt < 0 ||
-				ayInt > height && byInt > height))
-			drawLineZ(axInt, ayInt, (float) rebro.a.kz, bxInt, byInt, (float) rebro.b.kz, rebro.color);
+		if (rebro.a.kVis || rebro.b.kVis)
+			drawLineZ(rebro.a.kx, rebro.a.ky, rebro.a.kz, rebro.b.kx, rebro.b.ky, rebro.b.kz, rebro.color);
 	}
 
 	// одноцветная линия с учетом Z буфера
@@ -662,7 +658,7 @@ public abstract class KameraStatical extends ObjectStatical
 				drawHLineZ(ax, az, bx, bz, ay, color);
 			} else
 			{   // ab произвольная линия
-				// рисуем нижний треугольник
+				// рисуем треугольник ABD
 				x1Float = ax;
 				z1 = az;
 				x2Float = ax;
@@ -675,18 +671,18 @@ public abstract class KameraStatical extends ObjectStatical
 				{
 					drawHLineZ((int) x1Float, z1, (int) x2Float, z2, y, color);
 					x1Float -= dx1Float;
-					z1 += dz1Float;
+					z1 -= dz1Float;
 					x2Float -= dx2Float;
 					z2 -= dz2Float;
 				}
 			}
 
-			if (by == cy && by >= 0 && by < height)
+			if (by == cy)
 			{   // bc горизонтальная линия
 				drawHLineZ(bx, bz, cx, cz, by, color);
 			} else
 			{   // bc произвольная линия
-				// рисуем верхний треугольник
+				// рисуем треугольник BCD
 				x1Float = cx;
 				z1 = cz;
 				x2Float = cx;
@@ -1083,13 +1079,13 @@ public abstract class KameraStatical extends ObjectStatical
 	public void rotZ(int x1, int y1, int x2, int y2)
 	{
 		if (x1 < width / 2)
-			a -= 135.0 * (y2 - y1) / height;
+			angle -= 135.0 * (y2 - y1) / height;
 		else
-			a += 135.0 * (y2 - y1) / height;
+			angle += 135.0 * (y2 - y1) / height;
 		if (y1 > height / 2)
-			a -= 135.0 * (x2 - x1) / width;
+			angle -= 135.0 * (x2 - x1) / width;
 		else
-			a += 135.0 * (x2 - x1) / width;
+			angle += 135.0 * (x2 - x1) / width;
 	}
 
 	// изменение растояние от камеры до фокуса

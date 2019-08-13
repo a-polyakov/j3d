@@ -33,11 +33,25 @@ public class AnimXYZ implements ScenAnim, FileJava3D
 		this.z = new AnimDouble(z);
 	}
 
+	public void setCountKey(int n)
+	{
+		x.setCountKey(n);
+		y.setCountKey(n);
+		z.setCountKey(n);
+	}
+
 	public void setKey(int key, double x, double y, double z)
 	{
 		this.x.setKey(key, x);
 		this.y.setKey(key, y);
 		this.z.setKey(key, z);
+	}
+
+	public void moveKey(int index, int key, double x, double y, double z)
+	{
+		this.x.moveKey(index,key, x);
+		this.y.moveKey(index,key, y);
+		this.z.moveKey(index,key, z);
 	}
 
 	// определить состояние для указанного кадра

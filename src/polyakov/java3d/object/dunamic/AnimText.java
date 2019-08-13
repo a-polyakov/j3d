@@ -50,8 +50,11 @@ public class AnimText implements ScenAnim, FileJava3D
 		if (n > 0 && length != n)
 		{
 			length = n;
+			if (n > key.length)
+			{
 			key = Arrays.copyOf(key, n);
 			values = Arrays.copyOf(values, n);
+			}
 		}
 	}
 
@@ -68,7 +71,7 @@ public class AnimText implements ScenAnim, FileJava3D
 	public void setKey(int key, String value)
 	{
 		int i;
-		for (i = 0; i < length && this.key[i] > key; i++) ;
+		for (i = 0; i < length && this.key[i] < key; i++) ;
 		if (i < length)
 		{
 			if (this.key[i] == key)
@@ -87,8 +90,8 @@ public class AnimText implements ScenAnim, FileJava3D
 			}
 		} else
 		{   // добавить клучевое значение в конец
+			i = length;
 			setCountKey(length + 1);
-			i = length - 1;
 			this.key[i] = key;
 			values[i] = value;
 		}
@@ -103,13 +106,13 @@ public class AnimText implements ScenAnim, FileJava3D
 	// определить состояние для указанного кадра
 	public void setKadr(double kadr)
 	{
-		if (key.length == 1)
+		if (length == 1)
 		{	// начальное состояние, отсутствие анимации
 			value = values[0];
 		} else
 		{	// промежуточное состояние
 			boolean flag = true;
-			for (int i = 1; i < key.length && flag; i++)
+			for (int i = 1; i < length && flag; i++)
 				if (kadr < key[i])
 				{	// между двумя ключами
 					value = values[i - 1];
@@ -121,18 +124,17 @@ public class AnimText implements ScenAnim, FileJava3D
 				}
 			if (flag)
 			{	// за последним ключом
-				int i = key.length - 1;
-				value = values[i];
+				value = values[length - 1];
 			}
 		}
 	}
 
 	public void load(DataInputStream in) throws IOException
 	{
-		int l = in.readInt();
-		key = new int[l];
-		values = new String[l];
-		for (int i = 0; i < l; i++)
+		length = in.readInt();
+		key = new int[length];
+		values = new String[length];
+		for (int i = 0; i < length; i++)
 		{
 			key[i] = in.readInt();
 			values[i] = in.readUTF();
@@ -141,9 +143,8 @@ public class AnimText implements ScenAnim, FileJava3D
 
 	public void save(DataOutputStream out) throws IOException
 	{
-		int l = key.length;
-		out.writeInt(l);
-		for (int i = 0; i < l; i++)
+		out.writeInt(length);
+		for (int i = 0; i < length; i++)
 		{
 			out.writeInt(key[i]);
 			out.writeUTF(values[i]);

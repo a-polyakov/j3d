@@ -5,6 +5,7 @@ import polyakov.java3d.object.dynamical.Kamera;
 import polyakov.java3d.object.dynamical.Lamp;
 import polyakov.java3d.object.dynamical.Material;
 import polyakov.java3d.object.scen.primitives.Box;
+import polyakov.java3d.object.scen.primitives.Triangle;
 import polyakov.java3d.object.statical.ScenStatical;
 import polyakov.java3d.object.dunamic.DunamicObject;
 import polyakov.java3d.file.File3DS;
@@ -49,7 +50,7 @@ public class Scen extends ScenStatical implements FileJava3D, DunamicObject
 		kamera.Top();
 		addKamera(kamera);
 		kamera = new Kamera(this, mLampLen, "Kamera");
-		kamera.Front();
+		kamera.kamera.setKey(0, 100, 100, 100);
 		addKamera(kamera);
 
 		Material material = new Material(this, mMaterialLen, 0xff0000ff);
@@ -59,34 +60,38 @@ public class Scen extends ScenStatical implements FileJava3D, DunamicObject
 		material = new Material(this, mMaterialLen, 0xffff0000);
 		addMaterial(material);
 
-		Telo telo = new Box(this, mTelLen, "Z", 9, 9, 50);
-		telo.mov.setKey(0, 0, 0, 0);
-		telo.mov.setKey(100, 100, 0, 0);
-		telo.mov.setKey(200, 0, 0, 0);
-		telo.setMaterial(mMaterial[0]);
-		telo.mp[7].textA.setKey(0, "Z");
-		telo.mp[7].colorText = 0xff0000ff;
-		addTelo(telo);
+//		Telo telo = new Box(this, mTelLen, "Z", 9, 9, 50);
+//		telo.mov.x.setKey(0, 0);
+//		telo.mov.x.setKey(100, 100);
+//		telo.mov.x.setKey(200, 0);
+//		telo.setMaterial(mMaterial[0]);
+//		telo.mp[7].textA.setKey(0, "Z");
+//		telo.mp[7].colorText = 0xff0000ff;
+//		addTelo(telo);
+//
+//		telo = new Box(this, mTelLen, "Y", 6, 50, 6);
+//		telo.rot.x.setKey(0, 0);
+//		telo.rot.x.setKey(200, 360);
+//		telo.setMaterial(mMaterial[1]);
+//		telo.mp[7].textA.setKey(0, "Y");
+//		telo.mp[7].colorText = 0xff00ff00;
+//		addTelo(telo);
+//		telo = new Box(this, mTelLen, "X", 50, 3, 3);
+//		telo.mp[0].mov.setKey(0, 0, 0, 0);
+//		telo.mp[0].mov.setKey(100, -10, -10, -10);
+//		telo.mp[0].mov.setKey(200, 0, 0, 0);
+//		telo.setMaterial(mMaterial[2]);
+//		telo.mp[7].textA.setKey(0, "X");
+//		telo.mp[7].colorText = 0xffff0000;
+//		addTelo(telo);
 
-		telo = new Box(this, mTelLen, "Y", 6, 50, 6);
-		telo.rot.setKey(0, 0, 0, 0);
-		telo.rot.setKey(200, 360, 0, 0);
-		telo.setMaterial(mMaterial[1]);
-		telo.mp[7].textA.setKey(0, "Y");
-		telo.mp[7].colorText = 0xff00ff00;
-		addTelo(telo);
-		telo = new Box(this, mTelLen, "X", 50, 3, 3);
-		telo.mp[0].mov.setKey(0, 0, 0, 0);
-		telo.mp[0].mov.setKey(100, -10, -10, -10);
-		telo.mp[0].mov.setKey(200, 0, 0, 0);
-		telo.setMaterial(mMaterial[2]);
-		telo.mp[7].textA.setKey(0, "X");
-		telo.mp[7].colorText = 0xffff0000;
+		Telo telo = new Triangle(this,mTelLen, 50);
 		addTelo(telo);
 
 		Lamp lamp = new Lamp(this, 0, "Lamp1", 100, 100, 100, 0xffffffff);
 		addLamp(lamp);
 		maxKadr = 200;
+		kadr = -1;
 		setKadr(0);
 	}
 
@@ -213,17 +218,13 @@ public class Scen extends ScenStatical implements FileJava3D, DunamicObject
 		{
 			this.kadr = kadr;
 			for (int i = 0; i < mMaterialLen; i++)
-				if (mMaterial[i] != null)
-					mMaterial[i].setKadr(kadr);
+				mMaterial[i].setKadr(kadr);
 			for (int i = 0; i < mTelLen; i++)
-				if (mTel[i] != null)
-					mTel[i].setKadr(kadr);
+				mTel[i].setKadr(kadr);
 			for (int i = 0; i < mKamerLen; i++)
-				if (mKamer[i] != null)
-					mKamer[i].setKadr(kadr);
+				mKamer[i].setKadr(kadr);
 			for (int i = 0; i < mLampLen; i++)
-				if (mLamp[i] != null)
-					mLamp[i].setKadr(kadr);
+				mLamp[i].setKadr(kadr);
 		}
 	}
 }

@@ -22,18 +22,22 @@ public class AnimationListener implements ChangeListener, ActionListener
 	{
 		this.index = index;
 	}
+
 	// изменение положения ползунка
 	public void stateChanged(ChangeEvent e)
 	{
 		Object event = e.getSource();
 		if (event == index.kadr)
 		{
-			int kadr = index.kadr.getValue();
-			index.kadrLabel.setText(String.valueOf(kadr));
-			if (index.animation != null)
-				index.animation.setKadr(kadr);
-			index.scen.setKadr(kadr);
-			index.repaintCenter();
+			if (!index.play.isSelected())
+			{
+				int kadr = index.kadr.getValue();
+				index.kadrLabel.setText(String.valueOf(kadr));
+				if (index.animation != null)
+					index.animation.setKadr(kadr);
+				index.scen.setKadr(kadr);
+				index.repaintCenter();
+			}
 		} else if (event == index.gh)
 		{
 			index.animation.setFPS(index.gh.getInt());

@@ -37,13 +37,21 @@ public abstract class ScenStatical
 
 	public void clear()
 	{
-		for (int i=0; i<mTelLen;i++)
+		for (int i = mTelLen-1; i >= 0; i--)
 			mTel[i].remove();
-		for (int i=0; i<mKamerLen;i++)
+		mKamer[0].clear();
+		mKamer[0].Front();
+		mKamer[1].clear();
+		mKamer[1].Left();
+		mKamer[2].clear();
+		mKamer[2].Top();
+		mKamer[3].clear();
+		mKamer[3].kamera.setKey(0,100,100,100);
+		for (int i = mKamerLen-1; i >= 3; i--)
 			mKamer[i].remove();
-		for (int i=0; i<mLampLen;i++)
+		for (int i = mLampLen-1; i >= 0; i--)
 			mLamp[i].remove();
-		for (int i=0; i<mMaterialLen;i++)
+		for (int i = mMaterialLen-1; i >= 0; i--)
 			mMaterial[i].remove();
 	}
 
@@ -60,13 +68,13 @@ public abstract class ScenStatical
 
 	// добавить камеру
 	public void addKamera(Kamera kamera)
-		{
+	{
 		mKamerLen++;
 		if (mKamerLen > mKamer.length)
 		{
 			mKamer = Arrays.copyOf(mKamer, mKamerLen);
 		}
-		mKamer[mKamerLen-1] = kamera;
+		mKamer[mKamerLen - 1] = kamera;
 	}
 
 	// добавить источник света
@@ -77,7 +85,7 @@ public abstract class ScenStatical
 		{
 			mLamp = Arrays.copyOf(mLamp, mLampLen);
 		}
-		mLamp[mLampLen-1] = lamp;
+		mLamp[mLampLen - 1] = lamp;
 	}
 
 	// добавить материал
@@ -88,6 +96,6 @@ public abstract class ScenStatical
 		{
 			mMaterial = Arrays.copyOf(mMaterial, mMaterialLen);
 		}
-		mMaterial[mMaterialLen-1] =material;
+		mMaterial[mMaterialLen - 1] = material;
 	}
 }

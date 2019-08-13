@@ -19,12 +19,13 @@ public abstract class TochkaStatical extends ObjectStatical
 	public int color;				// цвет
 	public int colorText;			// цвет текста
 
-	public double kx, ky, kz;		// координаты относительно камеры
+	public int kx, ky;				// экранные координаты
+	public float kz;				// удаленость от камеры
 	public boolean kVis;			// видимость точки для камеры
 	public double nx, ny, nz;		// нормаль
 
 
-	private Telo telo;		// тело к которому пренадлежит точка
+	protected Telo telo;			// тело к которому пренадлежит точка
 
 	public TochkaStatical(Telo telo, int id, double x, double y, double z)
 	{

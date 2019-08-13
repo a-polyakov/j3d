@@ -6,6 +6,7 @@ import polyakov.java3d.object.dunamic.AnimBoolean;
 import polyakov.java3d.object.dunamic.DunamicObject;
 import polyakov.java3d.object.statical.ObjectStatical;
 import polyakov.java3d.file.FileJava3D;
+import polyakov.java3d.Const;
 
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -38,6 +39,9 @@ public class Telo extends ObjectStatical implements FileJava3D, DunamicObject
 	// статическая часть
 	public double x, y, z;			// положение обекта
 	public double rx, ry, rz;		// Угол поворота
+	public double cosX, sinX;		// коефициенты для поворота по X
+	public double cosY, sinY;		// коефициенты для поворота по Y
+	public double cosZ, sinZ;		// коефициенты для поворота по Z
 	public double mashtab;			// Масштаб
 	public boolean vis;				// видимость
 	public Tochka mp[];				// массив точек
@@ -80,7 +84,7 @@ public class Telo extends ObjectStatical implements FileJava3D, DunamicObject
 		// динамическая часть
 		mov = new AnimXYZ(0, 0, 0);
 		rot = new AnimXYZ(0, 0, 0);
-		mashtabA = new AnimDouble(1);
+		mashtabA = new AnimDouble(1.);
 		visA = new AnimBoolean(true);
 	}
 
@@ -166,11 +170,26 @@ public class Telo extends ObjectStatical implements FileJava3D, DunamicObject
 	public void setKadr(double kadr)
 	{
 		visA.setKadr(kadr);
-		if (visA.value)
+		vis=visA.value;
+		if (vis)
 		{
 			mov.setKadr(kadr);
+			x = mov.x.value;
+			y = mov.y.value;
+			z = mov.z.value;
 			rot.setKadr(kadr);
+			rx = rot.x.value;
+			ry = rot.y.value;
+			rz = rot.z.value;
+			cosX = Math.cos(rx * Const.RADIAN_V_GRADUSE);
+			sinX = Math.sin(rx * Const.RADIAN_V_GRADUSE);
+			cosY = Math.cos(ry * Const.RADIAN_V_GRADUSE);
+			sinY = Math.sin(ry * Const.RADIAN_V_GRADUSE);
+			cosZ = Math.cos(rz * Const.RADIAN_V_GRADUSE);
+			sinZ = Math.sin(rz * Const.RADIAN_V_GRADUSE);
+
 			mashtabA.setKadr(kadr);
+			mashtab=mashtabA.value;
 			// точки
 			for (int i = 0; i < mplen; i++)
 				mp[i].setKadr(kadr);

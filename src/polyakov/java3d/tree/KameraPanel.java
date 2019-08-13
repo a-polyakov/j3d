@@ -85,7 +85,7 @@ public class KameraPanel extends OptionPanel implements ChangeListener, ItemList
 		p1.add(new JLabel("Экран"));
 		p1.add(new JLabel("поворот"));
 		kamera_a = new NumUpDown(NumUpDown.TYPE_DOUBLE);
-		kamera_a.setDouble(kamera.a);
+		kamera_a.setDouble(kamera.angle);
 		kamera_a.addChangeListener(this);
 		p1.add(kamera_a);
 		p1.add(new JLabel("размер"));
@@ -161,7 +161,7 @@ public class KameraPanel extends OptionPanel implements ChangeListener, ItemList
 			kamera.nz = kamera_nz.getDouble();
 		} else if (event == kamera_a)
 		{
-			kamera.a = kamera_a.getDouble();
+			kamera.angle = kamera_a.getDouble();
 		} else if (event == kamera_me)
 		{
 			kamera.me = kamera_me.getDouble();

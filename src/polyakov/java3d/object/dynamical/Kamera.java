@@ -2,11 +2,11 @@ package polyakov.java3d.object.dynamical;
 
 import polyakov.java3d.object.dunamic.AnimXYZ;
 import polyakov.java3d.object.dunamic.DunamicObject;
+import polyakov.java3d.object.dunamic.AnimDouble;
 import polyakov.java3d.object.statical.ScenStatical;
 import polyakov.java3d.object.statical.KameraStatical;
 import polyakov.java3d.file.FileJava3D;
 
-import java.awt.*;
 import java.io.*;
 
 /**
@@ -19,15 +19,18 @@ import java.io.*;
 // разбить рендер по функциям
 public class Kamera extends KameraStatical implements FileJava3D, DunamicObject
 {
-	public AnimXYZ kamera;	// положение камеры
-	public AnimXYZ target;	// положение мишени
+	public AnimXYZ kamera;		// положение камеры
+	public AnimXYZ target;		// положение мишени
+	public AnimDouble angleA;	// поворот камеры вокруг оси
 
 	public Kamera(ScenStatical scen, int id, String name)
 	{
 		super(scen, id, name);
-		kamera=new AnimXYZ(100,100,100);
-		target=new AnimXYZ(0,0,0);
+		kamera = new AnimXYZ(100, 100, 100);
+		target = new AnimXYZ(0, 0, 0);
+		angleA = new AnimDouble(0.);
 	}
+
 	public Kamera(ScenStatical scen, int id)
 	{
 		this(scen, id, "Kamera");
@@ -35,57 +38,61 @@ public class Kamera extends KameraStatical implements FileJava3D, DunamicObject
 
 	public void Top()
 	{
-		kamera.setKey(0, 0,0,100);
-		target.setKey(0,0,0,0);
-		a = 0;
+		kamera.moveKey(0, 0, 0, 0, 100);
+		target.moveKey(0, 0, 0, 0, 0);
+		angleA.moveKey(0, 0, 0);
 	}
 
 	public void Bottom()
 	{
-		kamera.setKey(0, 0,0,-100);
-		target.setKey(0,0,0,0);
-		a = 180;
+		kamera.moveKey(0, 0, 0, 0, -100);
+		target.moveKey(0, 0, 0, 0, 0);
+		angleA.moveKey(0, 0, 180);
 	}
 
 	public void Front()
 	{
-		kamera.setKey(0, 0,-100,0);
-		target.setKey(0,0,0,0);
-		a = 0;
+		kamera.moveKey(0, 0, 0, -100, 0);
+		target.moveKey(0, 0, 0, 0, 0);
+		angleA.moveKey(0, 0, 0);
 	}
 
 	public void Back()
 	{
-		kamera.setKey(0, 0,100,0);
-		target.setKey(0,0,0,0);
-		a = 180;
+		kamera.moveKey(0, 0, 0, 100, 0);
+		target.moveKey(0, 0, 0, 0, 0);
+		angleA.moveKey(0, 0, 180);
 	}
 
 	public void Left()
 	{
-		kamera.setKey(0, -100,0,0);
-		target.setKey(0,0,0,0);
-		a = -90;
+		kamera.moveKey(0, 0, -100, 0, 0);
+		target.moveKey(0, 0, 0, 0, 0);
+		angleA.moveKey(0, 0, -90);
 	}
 
 	public void Right()
 	{
-		kamera.setKey(0, 100,0,0);
-		target.setKey(0,0,0,0);
-		a = 90;
+		kamera.moveKey(0, 0, 100, 0, 0);
+		target.moveKey(0, 0, 0, 0, 0);
+		angleA.moveKey(0, 0, 90);
 	}
 
-
+	public void clear()
+	{
+		kamera.setCountKey(1);
+		kamera.moveKey(0, 0, 100, 0, 0);
+		target.setCountKey(1);
+		target.moveKey(0, 0, 0, 0, 0);
+		angleA.setCountKey(1);
+		angleA.moveKey(0, 0, 0);
+	}
 
 	public void save(DataOutputStream out) throws IOException
 	{
-		out.writeDouble(x);
-		out.writeDouble(y);
-		out.writeDouble(z);
-		out.writeDouble(nx);
-		out.writeDouble(ny);
-		out.writeDouble(nz);
-		out.writeDouble(a);
+		kamera.save(out);
+		target.save(out);
+		out.writeDouble(angle);
 		out.writeDouble(d);
 		out.writeDouble(me);
 		out.writeBoolean(perspektiva);
@@ -102,13 +109,9 @@ public class Kamera extends KameraStatical implements FileJava3D, DunamicObject
 
 	public void load(DataInputStream in) throws IOException
 	{
-		x = in.readDouble();
-		y = in.readDouble();
-		z = in.readDouble();
-		nx = in.readDouble();
-		ny = in.readDouble();
-		nz = in.readDouble();
-		a = in.readDouble();
+		kamera.load(in);
+		target.load(in);
+		angle = in.readDouble();
 		d = in.readDouble();
 		me = in.readDouble();
 		perspektiva = in.readBoolean();
@@ -126,15 +129,16 @@ public class Kamera extends KameraStatical implements FileJava3D, DunamicObject
 	// переместить грань в указаный момент
 	public void setKadr(double kadr)
 	{
-		// пересщитать параметры
 		kamera.setKadr(kadr);
+		x = kamera.x.value;
+		y = kamera.y.value;
+		z = kamera.z.value;
 		target.setKadr(kadr);
-		// установить
-		x=kamera.x.value;
-		y=kamera.y.value;
-		z=kamera.z.value;
-		nx=target.x.value;
-		ny=target.y.value;
-		nz=target.z.value;
+		nx = target.x.value;
+		ny = target.y.value;
+		nz = target.z.value;
+		angleA.setKadr(kadr);
+		angle = angleA.value;
+		setUgol();
 	}
 }

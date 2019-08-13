@@ -31,8 +31,8 @@ public class Tochka extends TochkaStatical implements FileJava3D, DunamicObject
 	public Tochka(Telo telo, int id, double x, double y, double z)
 	{
 		super(telo, id, x, y, z);
-		mov=new AnimXYZ(x,y,z);
-		textA=new AnimText("");
+		mov = new AnimXYZ(x, y, z);
+		textA = new AnimText("");
 	}
 
 	public Tochka(Telo telo, int id)
@@ -61,14 +61,32 @@ public class Tochka extends TochkaStatical implements FileJava3D, DunamicObject
 	// переместить точку в указаный момент
 	public void setKadr(double kadr)
 	{
-		// наити координаты
-		mov.setKadr(kadr);
 		// найти текст
 		textA.setKadr(kadr);
 		// установит полученые значения
-		x=mov.x.value;
-		y=mov.y.value;
-		z=mov.z.value;
-		text=textA.value;
+		text = textA.value;
+		// наити координаты
+		mov.setKadr(kadr);
+		// установит полученые значения
+		x = mov.x.value;
+		y = mov.y.value;
+		z = mov.z.value;
+		// получить положение точек относительно мировой СК
+		// поворот вокруг оси X
+		double temp = y * telo.cosX + z * telo.sinX;
+		z = z * telo.cosX - y * telo.sinX;
+		y = temp;
+		// поворот вокруг оси Y
+		temp = x * telo.cosY + z * telo.sinY;
+		z = z * telo.cosY - x * telo.sinY;
+		x = temp;
+		// поворот вокруг оси Z
+		temp = x * telo.cosZ + y * telo.sinZ;
+		y = y * telo.cosZ - x * telo.sinZ;
+		x = temp;
+		// перенос
+		x += telo.x;
+		y += telo.y;
+		z += telo.z;
 	}
 }
