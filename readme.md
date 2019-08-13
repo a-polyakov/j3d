@@ -1,60 +1,40 @@
-<h1>Java3d</h1>
-Описание программы
-Программа написана на IntelliJ IDEA 6.0.5, кодировка UTF-8
-Файл проекта nirs.ipr
-В папке src находятся исподники всех классов для  проекта
-    • Animation 
-    • AnimationListener 
-    • ButtonListener 
-    • ColorField 
-    • File3DS 
-    • Gran 
-    • Index 
-    • Kamera 
-    • Lamp 
-    • LoadIcon 
-    • Material 
-    • NumUpDown 
-    • OptionScen 
-    • Point3D 
-    • RadioButton 
-    • Rebro 
-    • Scen 
-    • Screen 
-    • SortGran 
-    • Telo 
-    • Tochka 
-    • TreeScen 
-    • WindowApplication 
-Классы можно разделить на типы 
-- геометрическое описание объектов и их свойств
-    • Tochka 
-    • Rebro 
-    • Gran 
-    • Telo 
-    • Lamp 
-    • Kamera 
-    • Scen 	
-- классы обрабатывающие анимацию
-    • Animation 
-- классы обрабатывающие события 
-    • AnimationListener 
-    • ButtonListener 
-- классы реализующие элементы управления
-    • ColorField 
-    • NumUpDown 
-    • RadioButton 
-- 
+# J3D
+## Что такое J3D? 
+Программный пакет для демонстрации и модификации трехмерных сцен, встроенных в HTML страницу.
 
+## Перед начолом
+На компьютере должны быть установлены:
+  - [Java JDK 5 или выше](http://www.oracle.com/technetwork/java/javase/downloads/index.html),
+  - [Maven](https://maven.apache.org/download.cgi)
+  - [Git](https://git-scm.com/downloads) 
+  
+## Как запустить 
+  - скачать исходники
+  ```git clone https://github.com/a-polyakov/j3d.git```
+  - перейти в проект 
+  ```cd j3d```
+  - запустить сборку
+  ```mvn install```
+  - исполняемый файл находится внутри проекта по пути 
+  ```target/j3d.jar```
+  - запустить
+  ```java -jar j3d.jar```
+  
+  Функционал встраивания в HTML не работает, так как браузеры отказались от поддержки NPAPI (Netscape Plugin Application Programming Interface) 
+и как следствие [Java applet](https://ru.wikipedia.org/wiki/Java-%D0%B0%D0%BF%D0%BF%D0%BB%D0%B5%D1%82) перестали работать.
 
-    • File3DS 
-    • Index 
-    • LoadIcon 
-    • Material 
-    • OptionScen 
-    • Point3D 
-    • Scen 
-    • Screen 
-    • SortGran 
-    • TreeScen 
-    • WindowApplication 
+## История
+
+2006г. Программа начиналась как научно исследовательская работа студента в университете, и включала 
+реализацию основных алгоритмов 3D графики на языке Java.
+
+2007г. Затем работа перешла в дипломный проект “Программный пакет для демонстрации и модификации трехмерных сцен,
+ встроенных в HTML страницу”.
+
+К сожалению исходники дипломного проекта не сохранились, была найдена только резервная копия за месяц до сдачи диплома, 
+результаты наиболее интенсивного месяца утеряны, в 2010 году была попытка внести утерянные правки, 
+но из-за нехватки времени проект остался сырым.
+
+2019г. Для того чтобы не потерять на совсем, проект залит на github. 
+
+Изменена структуру каталогов под maven. 
